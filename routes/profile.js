@@ -1,57 +1,36 @@
 var express = require('express');
+var path = require('path');
 var router = express.Router();
-const multer  = require('multer')
+const multer = require('multer');
 
+// Configuración de almacenamiento
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads')
-      },
-      filename: function (req, file, cb) {
+        cb(null, 'uploads');
+    },
+    filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileExtension = file.originalname.split('.').pop(); 
-        cb(null, `${file.fieldname}-${uniqueSuffix}.${fileExtension}`); 
+        const fileExtension = file.originalname.split('.').pop();
+        cb(null, `${file.fieldname}-${uniqueSuffix}.${fileExtension}`);
     }
-})
+});
 
+// Filtro de archivos
 const fileFilter = (req, file, cb) => {
-    
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
-        cb(null, true); 
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
     } else {
-        cb(new Error('Soilik PNG eta JPG fitxategiak onartzen dira'), false); 
+        cb(new Error('Solo se permiten archivos PNG y JPG'), false);
     }
 };
 
+// Configuración de multer
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 2 * 1024 * 1024 
+        fileSize: 2 * 1024 * 1024
     },
     fileFilter: fileFilter
-});
-
-router.use(express.urlencoded({ extended: true }));
-
-/* POST eskaera: fitxategia eta izena prozesatu */
-router.post('/profile', upload.single('avatar'), function (req, res, next) {
-    const userName = req.body.name; 
-    const fileUrl = path.join('/uploads', req.file.filename);
-
-    console.log(`Zure izena: ${userName}`);
-    console.log(`Fitxategia: ${fileUrl}`);
-
-    res.send(`Zure izena: ${userName}. Fitxategia: ${fileUrl}`);
-});
-
-// Error handling middleware
-router.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        res.status(400).send(`Errorea: ${err.message}`);
-    } else if (err) {
-        res.status(400).send(`Errorea: ${err.message}`);
-    } else {
-        next();
-    }
 });
 
 /* GET home page. */
@@ -60,10 +39,18 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', upload.single('avatar'), function (req, res, next) {
-    console.log(req.file)
-    // req.body will hold the text fields, if there were any
-    res.send("Jasota")
-})
+    // Extraemos el nombre del campo de texto 'name' del formulario
+    const userName = req.body.name;
 
+    // Generamos la URL de la imagen cargada
+    const imageUrl = `https://fictional-couscous-wrxggp545w4fgvx9-3000.app.github.dev/uploads/${req.file.filename}`;
+
+    // Mostramos la información en la consola
+    console.log(`Zure izena: ${userName}`);
+    console.log(`Fitxategia: ${imageUrl}`);
+
+    // Enviamos una respuesta con los datos
+    res.send(`Jaso da`);
+});
 
 module.exports = router;

@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Formulario de subida</title>
 </head>
 <body>
 <form action="/profile" method="post" enctype="multipart/form-data">
     <label for="name">Zure izena:</label>
     <input type="text" id="name" name="name" required/>
-    <input type="file" name="avatar"/>
-    <input type="submit">
+    <input type="file" name="avatar" required/>
+    <input type="submit" value="Enviar">
 </form>
 </body>
 </html>
